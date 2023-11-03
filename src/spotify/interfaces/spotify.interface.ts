@@ -41,16 +41,16 @@ export interface SavedTrack {
 export interface Track {
   album?: Album;
   artists?: Artist[];
-  availableMarkets?: string[];
-  discNumber?: number;
-  durationMS?: number;
+  available_markets?: string[];
+  disc_number?: number;
+  duration_ms?: number;
   explicit?: boolean;
-  externalIDs?: ExternalIDs;
-  externalURLs?: ExternalURLs;
+  external_ids?: ExternalIDs;
+  external_urls?: ExternalURLs;
   href?: string;
   id?: string;
-  isPlayable?: boolean;
-  linkedFrom?: LinkedFrom;
+  is_playable?: boolean;
+  linked_from?: LinkedFrom;
   restrictions?: Restrictions;
   name?: string;
   popularity?: number;
@@ -62,16 +62,16 @@ export interface Track {
 }
 
 export interface Album {
-  albumType: string;
-  totalTracks: number;
-  availableMarkets: string[];
-  externalURLs: ExternalURLs;
+  album_type: string;
+  total_tracks: number;
+  available_markets: string[];
+  external_urls: ExternalURLs;
   href: string;
   id: string;
   images: Image[];
   name: string;
-  releaseDate: string;
-  releaseDatePrecision: string;
+  release_date: string;
+  release_date_precision: string;
   restrictions?: Restrictions;
   type: string;
   uri: string;
@@ -79,7 +79,7 @@ export interface Album {
 }
 
 export interface SimplifiedArtist {
-  externalURLs?: ExternalURLs;
+  external_urls?: ExternalURLs;
   href?: string;
   id?: string;
   name?: string;
@@ -88,7 +88,7 @@ export interface SimplifiedArtist {
 }
 
 export interface Artist {
-  externalURLs?: ExternalURLs;
+  external_urls?: ExternalURLs;
   followers?: Followers;
   genres?: string[];
   href?: string;
@@ -129,10 +129,10 @@ export interface Restrictions {
 
 export interface User {
   country?: string;
-  displayName?: string;
+  display_name?: string;
   email?: string;
-  explicitContent?: ExplicitContent;
-  externalURLs?: ExternalURLs;
+  explicit_content?: ExplicitContent;
+  external_urls?: ExternalURLs;
   followers?: Followers;
   href?: string;
   id?: string;

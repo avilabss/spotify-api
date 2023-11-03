@@ -6,6 +6,8 @@ import { HttpModule } from '@nestjs/axios';
 import { UtilsModule } from './utils/utils.module';
 import { TracksModule } from './tracks/tracks.module';
 import { SpotifyModule } from './spotify/spotify.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { SpotifyModule } from './spotify/spotify.module';
     UtilsModule,
     TracksModule,
     SpotifyModule,
+    PrismaModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],

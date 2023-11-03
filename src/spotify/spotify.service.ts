@@ -8,12 +8,13 @@ import {
   UserTracks,
 } from './interfaces/spotify.interface';
 import axios, { AxiosResponse } from 'axios';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class SpotifyService {
   baseUrl: string;
 
-  constructor() {
+  constructor(private userService: UserService) {
     this.baseUrl = 'https://api.spotify.com/v1';
   }
 
@@ -57,13 +58,11 @@ export class SpotifyService {
     return accessTokenResponse;
   }
 
-  async getProfile(): Promise<User> {
-    const authToken =
-      'BQAgpZyjdNMwoGOVzzJGs25K3AfSn2LPNYeeuP0lLaWqhN7TeSz0f6TCgGNWNE3DbA7tnaZ8mo-A21EHNkz5NtW2mrYYaD4d1Hs1nbbrwiBB8GwUo-nm6tEmY_LJ8y5_3IQr9z9pwPbX6vipqnNioNRkAKAEfEisWYJakBtF-LLqVzZWETxk95hvJ91DccbGU-Iev2kjYdbKJnpaZIp0N6UVhkzoT2Fc';
-    let url = `${this.baseUrl}/me/tracks`;
+  async getProfile(accessToken: string): Promise<User> {
+    let url = `${this.baseUrl}/me`;
 
     const headers = {
-      Authorization: `Bearer ${authToken}`,
+      Authorization: `Bearer ${accessToken}`,
     };
 
     let response: AxiosResponse;
@@ -85,11 +84,15 @@ export class SpotifyService {
   }
 
   async getLikedTracks(
+    email: string,
     requestUserTracksParams?: RequestUserTracksParams,
   ): Promise<UserTracks> {
-    const authToken =
-      'BQAgpZyjdNMwoGOVzzJGs25K3AfSn2LPNYeeuP0lLaWqhN7TeSz0f6TCgGNWNE3DbA7tnaZ8mo-A21EHNkz5NtW2mrYYaD4d1Hs1nbbrwiBB8GwUo-nm6tEmY_LJ8y5_3IQr9z9pwPbX6vipqnNioNRkAKAEfEisWYJakBtF-LLqVzZWETxk95hvJ91DccbGU-Iev2kjYdbKJnpaZIp0N6UVhkzoT2Fc';
     let url = `${this.baseUrl}/me/tracks`;
+    let user = await this.userService.getByEmail({ where: { email } });
+
+    if (user === null) {
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+    }
 
     if (requestUserTracksParams !== undefined) {
       url += '?';
@@ -99,7 +102,7 @@ export class SpotifyService {
     }
 
     const headers = {
-      Authorization: `Bearer ${authToken}`,
+      Authorization: `Bearer ${user?.access_token}`,
     };
 
     let response: AxiosResponse;
