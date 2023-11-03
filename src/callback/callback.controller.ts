@@ -22,6 +22,14 @@ export class CallbackController {
 
     const user = await this.spotifyService.getProfile(accessToken.access_token);
 
+    const userExists = await this.userService.getByEmail({
+      where: { email: user.email! },
+    });
+
+    if (userExists !== null) {
+      return { message: 'user already registered' };
+    }
+
     await this.userService.create({
       email: user.email!,
       access_token: accessToken.access_token,
