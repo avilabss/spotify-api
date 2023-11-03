@@ -33,7 +33,7 @@ export class CallbackController {
     await this.userService.create({
       email: user.email!,
       access_token: accessToken.access_token,
-      refresh_token: accessToken.access_token,
+      refresh_token: accessToken.refresh_token,
     });
 
     return { message: 'ok' };

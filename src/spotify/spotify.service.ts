@@ -58,6 +58,54 @@ export class SpotifyService {
     return accessTokenResponse;
   }
 
+  async refreshToken(email: string): Promise<void> {
+    const url = 'https://accounts.spotify.com/api/token';
+    const clientId = process.env.SPOTIFY_CLIENT_ID;
+    const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
+    const credsBuffer = Buffer.from(clientId + ':' + clientSecret);
+    const credsBase64 = credsBuffer.toString('base64');
+    const user = await this.userService.getByEmail({ where: { email } });
+
+    if (user === null) {
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+    }
+
+    const body = {
+      grant_type: 'refresh_token',
+      refresh_token: user.refresh_token,
+      client_id: clientId,
+    };
+
+    const headers = {
+      'content-type': 'application/x-www-form-urlencoded',
+      Authorization: 'Basic ' + credsBase64,
+    };
+
+    let response: AxiosResponse;
+    let responseData: any;
+
+    try {
+      response = await axios.post(url, body, { headers });
+      responseData = response.data;
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        throw new HttpException(err.response!.data, HttpStatus.FORBIDDEN);
+      }
+
+      throw new HttpException(err, HttpStatus.FORBIDDEN);
+    }
+
+    const accessTokenResponse = responseData as AccessTokenResponse;
+
+    await this.userService.updateByEmail({
+      where: { email },
+      data: {
+        access_token: accessTokenResponse.access_token,
+        refresh_token: accessTokenResponse.refresh_token,
+      },
+    });
+  }
+
   async getProfile(accessToken: string): Promise<User> {
     let url = `${this.baseUrl}/me`;
 
@@ -89,6 +137,10 @@ export class SpotifyService {
   ): Promise<UserTracks> {
     let url = `${this.baseUrl}/me/tracks`;
     let user = await this.userService.getByEmail({ where: { email } });
+
+    this.refreshToken(user?.email!);
+
+    user = await this.userService.getByEmail({ where: { email } });
 
     if (user === null) {
       throw new HttpException('user not found', HttpStatus.NOT_FOUND);

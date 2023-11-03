@@ -17,4 +17,13 @@ export class UserService {
 
     return this.prisma.user.findFirst({ where });
   }
+
+  async updateByEmail(params: {
+    where: Prisma.UserWhereUniqueInput;
+    data: Prisma.UserUpdateInput;
+  }): Promise<void> {
+    const { where, data } = params;
+
+    await this.prisma.user.update({ where, data });
+  }
 }
