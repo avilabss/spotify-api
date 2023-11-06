@@ -138,7 +138,7 @@ export class SpotifyService {
     let url = `${this.baseUrl}/me/tracks`;
     let user = await this.userService.getByEmail({ where: { email } });
 
-    this.refreshToken(user?.email!);
+    await this.refreshToken(user?.email!);
 
     user = await this.userService.getByEmail({ where: { email } });
 
