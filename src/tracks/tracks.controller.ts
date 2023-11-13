@@ -26,7 +26,7 @@ export class TracksController {
         title: item.track?.name!,
         artist: item.track?.album?.artists[0].name!,
         coverUrl: item.track?.album?.images.filter((image) => {
-          return image.height === 64;
+          return image.height === 300;
         })[0].url!,
         spotifyUrl: item.track?.external_urls?.spotify!,
         addedAt: item.added_at!,
