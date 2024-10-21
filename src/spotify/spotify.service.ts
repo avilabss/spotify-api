@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import {
   AccessTokenResponse,
   CallbackParams,
+  CurrentlyPlayingTrack,
   RequestAccessTokenBody,
   RequestUserTracksParams,
   User,
@@ -174,5 +175,40 @@ export class SpotifyService {
     const tracks = responseData as UserTracks;
 
     return tracks;
+  }
+
+  async getCurrentPlayingTrack(email: string): Promise<CurrentlyPlayingTrack> {
+    let url = `${this.baseUrl}/me/player/currently-playing?market=IN`;
+    let user = await this.userService.getByEmail({ where: { email } });
+
+    await this.refreshToken(user?.email!);
+
+    user = await this.userService.getByEmail({ where: { email } });
+
+    if (user === null) {
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+    }
+
+    const headers = {
+      Authorization: `Bearer ${user?.access_token}`,
+    };
+
+    let response: AxiosResponse;
+    let responseData: any;
+
+    try {
+      response = await axios.get(url, { headers });
+      responseData = response.data;
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        throw new HttpException(err.response!.data, HttpStatus.FORBIDDEN);
+      }
+
+      throw new HttpException(err, HttpStatus.FORBIDDEN);
+    }
+
+    const track = responseData as CurrentlyPlayingTrack;
+
+    return track;
   }
 }

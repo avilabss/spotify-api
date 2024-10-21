@@ -10,7 +10,8 @@ export class LoginService {
     const state = this.utilsService.generateRandomString(16);
     const clientId = process.env.SPOTIFY_CLIENT_ID;
 
-    const scope = 'user-read-private user-read-email user-library-read';
+    const scope =
+      'user-read-private user-read-email user-library-read user-read-currently-playing';
 
     return (
       'https://accounts.spotify.com/authorize?' +

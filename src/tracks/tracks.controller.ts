@@ -35,4 +35,16 @@ export class TracksController {
 
     return sendTracks;
   }
+
+  @Get('playing')
+  async getCurrentPlayingTrack(@Query() params: { email: string }) {
+    if (params.email === undefined) {
+      throw new HttpException('email is required', HttpStatus.NOT_FOUND);
+    }
+
+    const currentlyPlayingTrack =
+      await this.spotifyService.getCurrentPlayingTrack(params.email);
+
+    return currentlyPlayingTrack;
+  }
 }
